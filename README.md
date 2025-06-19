@@ -17,8 +17,6 @@ A comprehensive IoT-based emergency response system that monitors health vitals 
 
 ## 🛠️ Technology Stack
 
-
-
 ### Backend
 - **Node.js** with Express.js
 - **MongoDB** for data storage
@@ -40,6 +38,204 @@ A comprehensive IoT-based emergency response system that monitors health vitals 
 - **SIM800L** GSM module for SMS alerts
 - **OLED Display** for local status
 - **GPS Module** for location tracking
+
+## 📊 Circuit Diagrams
+
+### 🎨 Color Legend
+
+<table>
+<tr>
+<td style="background-color:#e74c3c; color:white; width:30px;"></td>
+<td><span style="color:#e74c3c">■</span> Controller & Emergency Indicators</td>
+</tr>
+<tr>
+<td style="background-color:#3498db; color:white;"></td>
+<td><span style="color:#3498db">■</span> Heart Rate & Emergency Controls</td>
+</tr>
+<tr>
+<td style="background-color:#f39c12; color:white;"></td>
+<td><span style="color:#f39c12">■</span> Temperature & Audio Feedback</td>
+</tr>
+<tr>
+<td style="background-color:#2ecc71; color:white;"></td>
+<td><span style="color:#2ecc71">■</span> Motion Detection & Status</td>
+</tr>
+<tr>
+<td style="background-color:#9b59b6; color:white;"></td>
+<td><span style="color:#9b59b6">■</span> Communication Components</td>
+</tr>
+<tr>
+<td style="background-color:#34495e; color:white;"></td>
+<td><span style="color:#34495e">■</span> Display & Interface Components</td>
+</tr>
+</table>
+
+<div align="center">
+<img src="connections/image.png" alt="RescueNet AI Circuit Diagram" width="800px" />
+</div>
+
+### 🔌 Main Components
+
+<table>
+<tr>
+<th>Component</th>
+<th>Description</th>
+<th>Connection</th>
+</tr>
+<tr>
+<td><span style="color:#e74c3c">📟 ESP32</span></td>
+<td>Main microcontroller</td>
+<td>Central processing unit</td>
+</tr>
+<tr>
+<td><span style="color:#3498db">❤️ MAX30102</span></td>
+<td>Heart Rate & SpO2 Sensor</td>
+<td>I2C (SDA: GPIO21, SCL: GPIO22)</td>
+</tr>
+<tr>
+<td><span style="color:#f39c12">🌡️ DS18B20</span></td>
+<td>Temperature Sensor</td>
+<td>1-Wire (Data: GPIO4)</td>
+</tr>
+<tr>
+<td><span style="color:#9b59b6">📱 SIM800L</span></td>
+<td>GSM Module</td>
+<td>UART (RX: GPIO16, TX: GPIO17)</td>
+</tr>
+<tr>
+<td><span style="color:#2ecc71">📊 MPU6050</span></td>
+<td>Accelerometer/Gyroscope</td>
+<td>I2C (SDA: GPIO21, SCL: GPIO22)</td>
+</tr>
+<tr>
+<td><span style="color:#34495e">📺 SSD1306</span></td>
+<td>OLED Display</td>
+<td>I2C (SDA: GPIO21, SCL: GPIO22)</td>
+</tr>
+</table>
+
+### 🔄 Arduino Nano Alternative
+
+<div align="center">
+<img src="connections/image copy.png" alt="RescueNet AI Arduino Nano Circuit" width="800px" />
+</div>
+
+<table>
+<tr>
+<th>Component</th>
+<th>Arduino Nano Pin</th>
+<th>Function</th>
+</tr>
+<tr>
+<td><span style="color:#3498db">❤️ MAX30102</span></td>
+<td>I2C (A4, A5)</td>
+<td>Heart Rate & SpO2 Sensor</td>
+</tr>
+<tr>
+<td><span style="color:#f39c12">🌡️ DS18B20</span></td>
+<td>D3</td>
+<td>Temperature Sensor with 4.7kΩ pullup</td>
+</tr>
+<tr>
+<td><span style="color:#2ecc71">📊 MPU6050</span></td>
+<td>I2C (A4, A5)</td>
+<td>Accelerometer/Gyroscope for fall detection</td>
+</tr>
+<tr>
+<td><span style="color:#34495e">📺 SSD1306</span></td>
+<td>I2C (A4, A5)</td>
+<td>OLED Display for local status</td>
+</tr>
+<tr>
+<td><span style="color:#2ecc71">🟢 Status LED</span></td>
+<td>D4</td>
+<td>System status indicator</td>
+</tr>
+<tr>
+<td><span style="color:#e74c3c">🔴 Emergency LED</span></td>
+<td>D6</td>
+<td>Emergency status indicator</td>
+</tr>
+<tr>
+<td><span style="color:#3498db">🔵 Emergency Button</span></td>
+<td>D2</td>
+<td>Manual emergency trigger</td>
+</tr>
+<tr>
+<td><span style="color:#f39c12">🔊 Buzzer</span></td>
+<td>D5</td>
+<td>Audio alert output</td>
+</tr>
+</table>
+
+### 🚨 Indicators & Controls
+
+<table>
+<tr>
+<th>Component</th>
+<th>ESP32 Pin</th>
+<th>Function</th>
+</tr>
+<tr>
+<td><span style="color:#2ecc71">🟢 Status LED</span></td>
+<td>GPIO 5</td>
+<td>System status indicator</td>
+</tr>
+<tr>
+<td><span style="color:#e74c3c">🔴 Emergency LED</span></td>
+<td>GPIO 18</td>
+<td>Emergency status indicator</td>
+</tr>
+<tr>
+<td><span style="color:#3498db">🔵 Emergency Button</span></td>
+<td>GPIO 0</td>
+<td>Manual emergency trigger</td>
+</tr>
+<tr>
+<td><span style="color:#f39c12">🔊 Buzzer</span></td>
+<td>GPIO 2</td>
+<td>Audio alert output</td>
+</tr>
+</table>
+
+### 📐 Connection Diagram (Interactive ASCII Representation)
+
+<pre style="line-height:1.2em">
+<span style="color:#e74c3c">┏━━━━━━━━━━┓</span>       <span style="color:#3498db">┏━━━━━━━━━━━┓</span>       <span style="color:#f39c12">┏━━━━━━━━━━┓</span>
+<span style="color:#e74c3c">┃   ESP32   ┃</span>───────<span style="color:#3498db">┃  MAX30102  ┃</span>       <span style="color:#f39c12">┃  DS18B20  ┃</span>
+<span style="color:#e74c3c">┃           ┃</span>       <span style="color:#3498db">┃ Heart Rate ┃</span>       <span style="color:#f39c12">┃   Temp    ┃</span>
+<span style="color:#e74c3c">┗━┯━━━━━┯━━━┛</span>       <span style="color:#3498db">┗━━━━┯━━━━━━┛</span>       <span style="color:#f39c12">┗━━━━┯━━━━━┛</span>
+  <span style="color:#e74c3c">│</span>     <span style="color:#e74c3c">│</span>              <span style="color:#3498db">│</span>                <span style="color:#f39c12">│</span>
+  <span style="color:#e74c3c">│</span>     <span style="color:#e74c3c">│</span>              <span style="color:#3498db">│</span>                <span style="color:#f39c12">│</span>
+  <span style="color:#e74c3c">│</span>     <span style="color:#e74c3c">│</span>              <span style="color:#3498db">└────────┐</span>        <span style="color:#f39c12">│</span>
+  <span style="color:#e74c3c">│</span>     <span style="color:#e74c3c">│</span>  <span style="color:#9b59b6">┏━━━━━━━━━━┓</span>      <span style="color:#3498db">│</span>        <span style="color:#f39c12">│</span>
+  <span style="color:#e74c3c">│</span>     <span style="color:#e74c3c">└──┨</span><span style="color:#9b59b6">  SIM800L  ┃</span>      <span style="color:#3498db">│</span>        <span style="color:#f39c12">│</span>
+  <span style="color:#e74c3c">│</span>        <span style="color:#9b59b6">┃    GSM    ┃</span>      <span style="color:#3498db">│</span>        <span style="color:#f39c12">│</span>
+  <span style="color:#e74c3c">│</span>        <span style="color:#9b59b6">┗━━━━━━━━━━┛</span>      <span style="color:#3498db">│</span>        <span style="color:#f39c12">│</span>
+  <span style="color:#e74c3c">│</span>                           <span style="color:#3498db">│</span>        <span style="color:#f39c12">│</span>
+  <span style="color:#e74c3c">│</span>                           <span style="color:#3498db">│</span>        <span style="color:#f39c12">│</span>
+  <span style="color:#e74c3c">│</span>                           <span style="color:#3498db">│</span>        <span style="color:#f39c12">│</span>
+  <span style="color:#e74c3c">│</span>  <span style="color:#2ecc71">┏━━━━━━━━━━┓</span>            <span style="color:#3498db">│</span>        <span style="color:#f39c12">│</span>
+  <span style="color:#e74c3c">└──┨</span><span style="color:#2ecc71">  MPU6050  ┠────────────┘</span>        <span style="color:#f39c12">│</span>
+     <span style="color:#2ecc71">┃Accel/Gyro┃</span>                     <span style="color:#f39c12">│</span>
+     <span style="color:#2ecc71">┗━━━━━━━━━━┛</span>                     <span style="color:#f39c12">│</span>
+                                       <span style="color:#f39c12">│</span>
+                                       <span style="color:#f39c12">│</span>
+  <span style="color:#34495e">┏━━━━━━━━━━┓</span>                      <span style="color:#f39c12">│</span>
+  <span style="color:#34495e">┃  SSD1306  ┠──────────────────────┘</span>
+  <span style="color:#34495e">┃   OLED    ┃</span>
+  <span style="color:#34495e">┗━━━━━━━━━━┛</span>
+
+<span style="color:#e74c3c">ESP32</span> ─── <span style="color:#e74c3c">●</span> GPIO 0 ─── <span style="color:#3498db">🔵 Emergency Button</span>
+      ─── <span style="color:#e74c3c">●</span> GPIO 2 ─── <span style="color:#f39c12">🔊 Buzzer</span>
+      ─── <span style="color:#e74c3c">●</span> GPIO 4 ─── <span style="color:#f39c12">🌡️ DS18B20 Data</span>
+      ─── <span style="color:#e74c3c">●</span> GPIO 5 ─── <span style="color:#2ecc71">🟢 Status LED</span>
+      ─── <span style="color:#e74c3c">●</span> GPIO 18 ─── <span style="color:#e74c3c">🔴 Emergency LED</span>
+      ─── <span style="color:#e74c3c">●</span> GPIO 21 ─── <span style="color:#34495e">📊 I2C SDA</span> (MAX30102, MPU6050, OLED)
+      ─── <span style="color:#e74c3c">●</span> GPIO 22 ─── <span style="color:#34495e">📊 I2C SCL</span> (MAX30102, MPU6050, OLED)
+</pre>
+
+> For interactive circuit diagrams, visit the [web dashboard](#-usage) and navigate to the Circuit Diagrams section
 
 ## 📋 Prerequisites
 
@@ -112,17 +308,59 @@ Open your browser and go to: `http://localhost:3000`
 ## 🔌 ESP32 Setup
 
 ### Hardware Connections
-```
-ESP32 Pin    | Component
--------------|----------------
-GPIO 4       | DS18B20 Temperature Sensor
-GPIO 21      | I2C SDA (MAX30102, MPU6050, OLED)
-GPIO 22      | I2C SCL (MAX30102, MPU6050, OLED)
-GPIO 2       | Buzzer
-GPIO 5       | Status LED
-GPIO 18      | Emergency LED
-GPIO 0       | Emergency Button
-```
+
+<table>
+  <tr>
+    <th><span style="color:#e74c3c">ESP32 Pin</span></th>
+    <th>Component</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><span style="color:#e74c3c">GPIO 4</span></td>
+    <td><span style="color:#f39c12">🌡️ DS18B20</span></td>
+    <td>Temperature Sensor Data (1-Wire)</td>
+  </tr>
+  <tr>
+    <td><span style="color:#e74c3c">GPIO 21</span></td>
+    <td><span style="color:#34495e">📊 I2C SDA</span></td>
+    <td>Shared I2C Data (MAX30102, MPU6050, OLED)</td>
+  </tr>
+  <tr>
+    <td><span style="color:#e74c3c">GPIO 22</span></td>
+    <td><span style="color:#34495e">📊 I2C SCL</span></td>
+    <td>Shared I2C Clock (MAX30102, MPU6050, OLED)</td>
+  </tr>
+  <tr>
+    <td><span style="color:#e74c3c">GPIO 2</span></td>
+    <td><span style="color:#f39c12">🔊 Buzzer</span></td>
+    <td>Audio Alert Output</td>
+  </tr>
+  <tr>
+    <td><span style="color:#e74c3c">GPIO 5</span></td>
+    <td><span style="color:#2ecc71">🟢 Status LED</span></td>
+    <td>System Status Indicator</td>
+  </tr>
+  <tr>
+    <td><span style="color:#e74c3c">GPIO 18</span></td>
+    <td><span style="color:#e74c3c">🔴 Emergency LED</span></td>
+    <td>Emergency Status Indicator</td>
+  </tr>
+  <tr>
+    <td><span style="color:#e74c3c">GPIO 0</span></td>
+    <td><span style="color:#3498db">🔵 Emergency Button</span></td>
+    <td>Manual Emergency Trigger</td>
+  </tr>
+  <tr>
+    <td><span style="color:#e74c3c">GPIO 16</span></td>
+    <td><span style="color:#9b59b6">📱 SIM800L RXD</span></td>
+    <td>Serial Receive from GSM Module</td>
+  </tr>
+  <tr>
+    <td><span style="color:#e74c3c">GPIO 17</span></td>
+    <td><span style="color:#9b59b6">📱 SIM800L TXD</span></td>
+    <td>Serial Transmit to GSM Module</td>
+  </tr>
+</table>
 
 ### Arduino Libraries Required
 Install these libraries through Arduino IDE Library Manager:
