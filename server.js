@@ -11,6 +11,12 @@ const twilio = require('twilio');
 const nodemailer = require('nodemailer');
 const EmergencyServices = require('./utils/emergencyServices');
 const HealthAnalytics = require('./utils/healthAnalytics');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const csrfTokens = require('csrf-tokens');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -63,164 +69,486 @@ if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
   });
 }
 
-// User Schema
+// Initialize CSRF protection
+const csrf = csrfTokens();
+
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'rescuenet-ai-session-secret',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: mongoUri,
+    touchAfter: 24 * 3600 // lazy session update
+  }),
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+  }
+}));
+
+// Enhanced User Schema
 const userSchema = new mongoose.Schema({
-  phone: { type: String, unique: true, required: true },
-  name: { type: String, required: true },
-  age: { type: Number, required: true },
-  gender: { type: String, enum: ['M', 'F', 'Other'], required: true },
-  bloodGroup: String,
-  emergencyContact: String,
-  medicalHistory: String,
-  lastPeriodDate: Date,
-  createdAt: { type: Date, default: Date.now }
-});
-
-// Health Data Schema (continued)
-const healthDataSchema = new mongoose.Schema({
- userId: { type: String, required: true },
- timestamp: { type: Date, default: Date.now },
- vitals: {
-   heartRate: Number,
-   temperature: Number,
-   bloodPressure: Number
- },
- location: {
-   lat: Number,
-   lng: Number,
-   altitude: Number
- },
- accelerometer: {
-   x: Number,
-   y: Number,
-   z: Number
- },
- emergency: { type: Boolean, default: false },
- emergencyReason: String
-});
-
-// Emergency Log Schema
-const emergencySchema = new mongoose.Schema({
-  userId: { type: String, required: true },
-  timestamp: { type: Date, default: Date.now },
-  reason: String,
-  location: {
-    lat: Number,
-    lng: Number
+  // Basic Information
+  fullName: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  phoneNumber: { type: String, required: true },
+  password: { type: String, required: true },
+  
+  // Profile Information  
+  dateOfBirth: Date,
+  address: {
+    street: String,
+    city: String,
+    state: String,
+    zipCode: String,
+    country: String
   },
-  vitals: {
-    heartRate: Number,
-    temperature: Number,
-    bloodPressure: Number
-  },
-  status: { type: String, enum: ['Active', 'Responded', 'Resolved'], default: 'Active' },
-  autoDetected: { type: Boolean, default: false },
-  resolved: { type: Boolean, default: false },
-  responders: [{
-    name: String,
-    phone: String,
-    eta: String,
-    arrived: { type: Boolean, default: false }
-  }],
-  userInfo: {
-    name: String,
-    age: Number,
+  
+  // Medical Information
+  medicalInfo: {
     bloodGroup: String,
-    medicalHistory: String,
-    emergencyContact: String
+    height: Number,
+    weight: Number,
+    allergies: [String],
+    medications: [String],
+    medicalConditions: [String],
+    emergencyMedicalInfo: String,
+    physicianName: String,
+    physicianPhone: String
+  },
+  
+  // Emergency Contacts
+  emergencyContacts: [{
+    name: { type: String, required: true },
+    relationship: String,
+    phone: { type: String, required: true },
+    email: String,
+    isPrimary: { type: Boolean, default: false }
+  }],
+  
+  // Security Settings
+  security: {
+    twoFactorEnabled: { type: Boolean, default: false },
+    twoFactorSecret: String,
+    lastLogin: Date,
+    loginAttempts: { type: Number, default: 0 },
+    lockUntil: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    emailVerificationToken: String,
+    emailVerified: { type: Boolean, default: false }
+  },
+  
+  // Preferences
+  preferences: {
+    notifications: {
+      emergencyAlerts: { type: Boolean, default: true },
+      healthReminders: { type: Boolean, default: true },
+      marketingEmails: { type: Boolean, default: false }
+    },
+    privacy: {
+      shareResearchData: { type: Boolean, default: false },
+      allowThirdPartyIntegrations: { type: Boolean, default: false },
+      locationTracking: { type: Boolean, default: true },
+      emergencyDataSharing: { type: Boolean, default: true }
+    },
+    device: {
+      monitoringFrequency: { type: String, default: 'Every 5 minutes' },
+      alertSensitivity: { type: String, default: 'Medium' }
+    }
+  },
+  
+  // Account Status
+  isActive: { type: Boolean, default: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
+// Add password hashing middleware
+userSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
+  
+  try {
+    const salt = await bcrypt.genSalt(12);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error);
   }
 });
 
-const User = mongoose.model('User', userSchema);
-const HealthData = mongoose.model('HealthData', healthDataSchema);
-const Emergency = mongoose.model('Emergency', emergencySchema);
+// Password comparison method
+userSchema.methods.comparePassword = async function(candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
 
-// WebSocket server for real-time updates
-const wss = new WebSocket.Server({ port: WEBSOCKET_PORT });
+// Generate password reset token
+userSchema.methods.createPasswordResetToken = function() {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  this.security.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  this.security.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+  return resetToken;
+};
 
-wss.on('connection', function connection(ws) {
-  console.log('Client connected to WebSocket');
+// JWT token generation
+const generateToken = (userId) => {
+  return jwt.sign({ userId }, process.env.JWT_SECRET || 'rescuenet-ai-jwt-secret', {
+    expiresIn: '7d'
+  });
+};
+
+// Authentication middleware
+const authenticateToken = async (req, res, next) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '') || req.session.token;
+    
+    if (!token) {
+      return res.status(401).json({ error: 'Access denied. No token provided.' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'rescuenet-ai-jwt-secret');
+    const user = await User.findById(decoded.userId).select('-password');
+    
+    if (!user || !user.isActive) {
+      return res.status(401).json({ error: 'Invalid token or user deactivated.' });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    res.status(401).json({ error: 'Invalid token.' });
+  }
+};
+
+// CSRF token endpoint
+app.get('/api/csrf-token', (req, res) => {
+  const secret = csrf.secretSync();
+  const token = csrf.create(secret);
+  req.session.csrfSecret = secret;
+  res.json({ csrfToken: token });
+});
+
+// CSRF validation middleware
+const validateCSRF = (req, res, next) => {
+  if (process.env.NODE_ENV === 'development') {
+    return next(); // Skip CSRF in development
+  }
   
-  ws.on('message', function incoming(message) {
-    try {
-      const data = JSON.parse(message);
-      console.log('Received WebSocket message:', data);
-      
-      // Handle different message types
-      if (data.type === 'subscribe') {
-        ws.userId = data.userId;
+  const token = req.header('X-CSRF-Token') || req.body.csrfToken;
+  const secret = req.session.csrfSecret;
+  
+  if (!token || !secret || !csrf.verify(secret, token)) {
+    return res.status(403).json({ error: 'Invalid CSRF token' });
+  }
+  
+  next();
+};
+
+// Rate limiting for authentication endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // limit each IP to 5 requests per windowMs
+  message: 'Too many authentication attempts, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// User Registration API
+app.post('/api/auth/register', authLimiter, validateCSRF, async (req, res) => {
+  try {
+    const {
+      fullName,
+      email,
+      phoneNumber,
+      password,
+      dateOfBirth,
+      address,
+      medicalInfo,
+      emergencyContacts
+    } = req.body;
+
+    // Validation
+    if (!fullName || !email || !phoneNumber || !password) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ 
+      $or: [{ email }, { phoneNumber }] 
+    });
+    
+    if (existingUser) {
+      return res.status(400).json({ error: 'User with this email or phone number already exists' });
+    }
+
+    // Create new user
+    const user = new User({
+      fullName,
+      email,
+      phoneNumber,
+      password,
+      dateOfBirth,
+      address,
+      medicalInfo,
+      emergencyContacts,
+      security: {
+        emailVerificationToken: crypto.randomBytes(32).toString('hex')
       }
-    } catch (error) {
-      console.error('Error parsing WebSocket message:', error);
+    });
+
+    await user.save();
+
+    // Generate JWT token
+    const token = generateToken(user._id);
+    req.session.token = token;
+    req.session.userId = user._id;
+
+    // Remove sensitive information
+    const userResponse = user.toObject();
+    delete userResponse.password;
+    delete userResponse.security.passwordResetToken;
+    delete userResponse.security.emailVerificationToken;
+
+    res.status(201).json({
+      message: 'User registered successfully',
+      user: userResponse,
+      token
+    });
+
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// User Login API
+app.post('/api/auth/login', authLimiter, validateCSRF, async (req, res) => {
+  try {
+    const { email, password, rememberMe } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
     }
-  });
-  
-  ws.on('close', function() {
-    console.log('Client disconnected from WebSocket');
+
+    // Find user and check if account is locked
+    const user = await User.findOne({ email });
+    
+    if (!user || !user.isActive) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Check if account is locked
+    if (user.security.lockUntil && user.security.lockUntil > Date.now()) {
+      return res.status(423).json({ error: 'Account temporarily locked due to too many failed attempts' });
+    }
+
+    // Verify password
+    const isMatch = await user.comparePassword(password);
+    
+    if (!isMatch) {
+      // Increment login attempts
+      user.security.loginAttempts += 1;
+      
+      if (user.security.loginAttempts >= 5) {
+        user.security.lockUntil = Date.now() + 15 * 60 * 1000; // Lock for 15 minutes
+      }
+      
+      await user.save();
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Reset login attempts on successful login
+    user.security.loginAttempts = 0;
+    user.security.lockUntil = undefined;
+    user.security.lastLogin = new Date();
+    await user.save();
+
+    // Generate JWT token
+    const tokenExpiry = rememberMe ? '30d' : '7d';
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'rescuenet-ai-jwt-secret', {
+      expiresIn: tokenExpiry
+    });
+
+    req.session.token = token;
+    req.session.userId = user._id;
+
+    // Update session expiry based on "Remember Me"
+    if (rememberMe) {
+      req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 30; // 30 days
+    }
+
+    // Remove sensitive information
+    const userResponse = user.toObject();
+    delete userResponse.password;
+    delete userResponse.security.passwordResetToken;
+    delete userResponse.security.emailVerificationToken;
+    delete userResponse.security.twoFactorSecret;
+
+    res.json({
+      message: 'Login successful',
+      user: userResponse,
+      token,
+      requiresTwoFactor: user.security.twoFactorEnabled
+    });
+
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get User Profile API
+app.get('/api/user/profile', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password -security.passwordResetToken -security.emailVerificationToken -security.twoFactorSecret');
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ user });
+  } catch (error) {
+    console.error('Profile fetch error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update User Profile API
+app.put('/api/user/profile', authenticateToken, validateCSRF, async (req, res) => {
+  try {
+    const updates = req.body;
+    const userId = req.user._id;
+
+    // Remove sensitive fields that shouldn't be updated via this endpoint
+    delete updates.password;
+    delete updates.security;
+    delete updates._id;
+    delete updates.createdAt;
+
+    // Update timestamp
+    updates.updatedAt = new Date();
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: updates },
+      { new: true, runValidators: true }
+    ).select('-password -security.passwordResetToken -security.emailVerificationToken -security.twoFactorSecret');
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      message: 'Profile updated successfully',
+      user
+    });
+
+  } catch (error) {
+    console.error('Profile update error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update User Preferences API
+app.put('/api/user/preferences', authenticateToken, validateCSRF, async (req, res) => {
+  try {
+    const { preferences } = req.body;
+    const userId = req.user._id;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { 
+        $set: { 
+          preferences,
+          updatedAt: new Date()
+        }
+      },
+      { new: true, runValidators: true }
+    ).select('-password -security.passwordResetToken -security.emailVerificationToken -security.twoFactorSecret');
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      message: 'Preferences updated successfully',
+      preferences: user.preferences
+    });
+
+  } catch (error) {
+    console.error('Preferences update error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Change Password API
+app.put('/api/user/change-password', authenticateToken, validateCSRF, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user._id;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Current password and new password are required' });
+    }
+
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Verify current password
+    const isMatch = await user.comparePassword(currentPassword);
+    
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Current password is incorrect' });
+    }
+
+    // Update password
+    user.password = newPassword;
+    user.updatedAt = new Date();
+    await user.save();
+
+    res.json({ message: 'Password changed successfully' });
+
+  } catch (error) {
+    console.error('Password change error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Logout API
+app.post('/api/auth/logout', authenticateToken, (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ error: 'Could not log out' });
+    }
+    res.clearCookie('connect.sid');
+    res.json({ message: 'Logged out successfully' });
   });
 });
 
-// Broadcast function for real-time updates
-function broadcast(data) {
-  wss.clients.forEach(function each(client) {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify(data));
-    }
+// Demo accounts for testing
+app.get('/api/demo-accounts', (req, res) => {
+  res.json({
+    accounts: [
+      {
+        email: 'demo@rescuenet.ai',
+        password: 'demo123',
+        name: 'Demo User',
+        description: 'Standard user account with sample data'
+      },
+      {
+        email: 'admin@rescuenet.ai', 
+        password: 'admin123',
+        name: 'Admin User',
+        description: 'Administrative access with full permissions'
+      }
+    ]
   });
-}
-
-// Send message to specific user
-function sendToUser(userId, data) {
-  wss.clients.forEach(function each(client) {
-    if (client.readyState === WebSocket.OPEN && client.userId === userId) {
-      client.send(JSON.stringify(data));
-    }
-  });
-}
-
-// Emergency notification functions
-async function sendSMSAlert(phoneNumber, message) {
-  if (twilioClient && process.env.TWILIO_PHONE_NUMBER) {
-    try {
-      await twilioClient.messages.create({
-        body: message,
-        from: process.env.TWILIO_PHONE_NUMBER,
-        to: phoneNumber
-      });
-      console.log(`SMS sent to ${phoneNumber}`);
-    } catch (error) {
-      console.error('Error sending SMS:', error);
-    }
-  }
-}
-
-async function sendEmailAlert(email, subject, message) {
-  if (emailTransporter) {
-    try {
-      await emailTransporter.sendMail({
-        from: process.env.EMAIL_FROM || 'RescueNet AI <noreply@rescuenet.ai>',
-        to: email,
-        subject: subject,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #e74c3c;">🚨 RescueNet AI Emergency Alert</h2>
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
-              ${message}
-            </div>
-            <p style="color: #666; font-size: 14px; margin-top: 20px;">
-              This is an automated emergency notification from RescueNet AI.
-            </p>
-          </div>
-        `
-      });
-      console.log(`Email sent to ${email}`);
-    } catch (error) {
-      console.error('Error sending email:', error);
-    }
-  }
-}
-
-// Routes
+});
 
 // User registration/login
 app.post('/api/register', async (req, res) => {
