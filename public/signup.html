@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RescueNet AI - Create Your Account</title>
+    <meta name="description" content="Create your secure RescueNet AI account for emergency response monitoring">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/auth.css" rel="stylesheet">
+    <link href="css/profile.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="auth-nav">
+        <div class="nav-container">
+            <a href="home.html" class="nav-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>RescueNet AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="login.html" class="nav-link">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="home.html" class="nav-link">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-card large">
+            <div class="auth-header">
+                <h1><i class="fas fa-user-plus"></i> Create Your Account</h1>
+                <p>Join thousands of users who trust RescueNet AI for their safety</p>
+            </div>
+
+            <!-- Progress Indicator -->
+            <div class="progress-indicator">
+                <div class="progress-step active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <span>Personal Info</span>
+                </div>
+                <div class="progress-step" data-step="2">
+                    <div class="step-circle">2</div>
+                    <span>Medical Details</span>
+                </div>
+                <div class="progress-step" data-step="3">
+                    <div class="step-circle">3</div>
+                    <span>Emergency Contacts</span>
+                </div>
+                <div class="progress-step" data-step="4">
+                    <div class="step-circle">4</div>
+                    <span>Security Setup</span>
+                </div>
+            </div>
+
+            <!-- Registration Status -->
+            <div id="registrationStatus" class="status-message hidden"></div>
+
+            <!-- Multi-Step Form -->
+            <form id="registrationForm" class="multi-step-form" novalidate>
+                <!-- Step 1: Personal Information -->
+                <div class="form-step active" id="step1">
+                    <div class="step-header">
+                        <h3><i class="fas fa-user"></i> Personal Information</h3>
+                        <p>Basic information to set up your profile</p>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">
+                                <i class="fas fa-user"></i> First Name *
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user input-icon"></i>
+                                <input 
+                                    type="text" 
+                                    id="firstName" 
+                                    name="firstName"
+                                    placeholder="Enter your first name"
+                                    required
+                                    autocomplete="given-name"
+                                    pattern="[A-Za-z\s]{2,50}"
+                                    title="First name should be 2-50 characters, letters only"
+                                >
+                                <div class="input-validation">
+                                    <i class="fas fa-check-circle valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle invalid-icon"></i>
+                                </div>
+                            </div>
+                            <div class="field-error" id="firstNameError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lastName">
+                                <i class="fas fa-user"></i> Last Name *
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user input-icon"></i>
+                                <input 
+                                    type="text" 
+                                    id="lastName" 
+                                    name="lastName"
+                                    placeholder="Enter your last name"
+                                    required
+                                    autocomplete="family-name"
+                                    pattern="[A-Za-z\s]{2,50}"
+                                    title="Last name should be 2-50 characters, letters only"
+                                >
+                                <div class="input-validation">
+                                    <i class="fas fa-check-circle valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle invalid-icon"></i>
+                                </div>
+                            </div>
+                            <div class="field-error" id="lastNameError"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="regPhone">
+                                <i class="fas fa-phone"></i> Phone Number *
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-phone input-icon"></i>
+                                <input 
+                                    type="tel" 
+                                    id="regPhone" 
+                                    name="phone"
+                                    placeholder="Enter your phone number"
+                                    required
+                                    autocomplete="tel"
+                                    pattern="[0-9]{10,15}"
+                                    title="Please enter a valid phone number"
+                                >
+                                <div class="input-validation">
+                                    <i class="fas fa-check-circle valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle invalid-icon"></i>
+                                </div>
+                            </div>
+                            <div class="field-error" id="phoneError"></div>
+                            <small class="field-help">This will be your primary contact and login method</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regEmail">
+                                <i class="fas fa-envelope"></i> Email Address *
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-envelope input-icon"></i>
+                                <input 
+                                    type="email" 
+                                    id="regEmail" 
+                                    name="email"
+                                    placeholder="Enter your email address"
+                                    required
+                                    autocomplete="email"
+                                >
+                                <div class="input-validation">
+                                    <i class="fas fa-check-circle valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle invalid-icon"></i>
+                                </div>
+                            </div>
+                            <div class="field-error" id="emailError"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="regAge">
+                                <i class="fas fa-birthday-cake"></i> Age *
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-birthday-cake input-icon"></i>
+                                <input 
+                                    type="number" 
+                                    id="regAge" 
+                                    name="age"
+                                    placeholder="Enter your age"
+                                    required
+                                    min="13"
+                                    max="120"
+                                    autocomplete="bday-year"
+                                >
+                                <div class="input-validation">
+                                    <i class="fas fa-check-circle valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle invalid-icon"></i>
+                                </div>
+                            </div>
+                            <div class="field-error" id="ageError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regGender">
+                                <i class="fas fa-venus-mars"></i> Gender *
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-venus-mars input-icon"></i>
+                                <select id="regGender" name="gender" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                    <option value="O">Other</option>
+                                    <option value="N">Prefer not to say</option>
+                                </select>
+                                <div class="input-validation">
+                                    <i class="fas fa-check-circle valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle invalid-icon"></i>
+                                </div>
+                            </div>
+                            <div class="field-error" id="genderError"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Medical Information -->
+                <div class="form-step" id="step2">
+                    <div class="step-header">
+                        <h3><i class="fas fa-heartbeat"></i> Medical Information</h3>
+                        <p>Help us provide better emergency response tailored to your health</p>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="regBloodGroup">
+                                <i class="fas fa-tint"></i> Blood Group *
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-tint input-icon"></i>
+                                <select id="regBloodGroup" name="bloodGroup" required>
+                                    <option value="">Select Blood Group</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="Unknown">Unknown</option>
+                                </select>
+                                <div class="input-validation">
+                                    <i class="fas fa-check-circle valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle invalid-icon"></i>
+                                </div>
+                            </div>
+                            <div class="field-error" id="bloodGroupError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regHeight">
+                                <i class="fas fa-ruler-vertical"></i> Height (cm)
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-ruler-vertical input-icon"></i>
+                                <input 
+                                    type="number" 
+                                    id="regHeight" 
+                                    name="height"
+                                    placeholder="Enter height in cm"
+                                    min="100"
+                                    max="250"
+                                >
+                                <div class="input-validation">
+                                    <i class="fas fa-check-circle valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle invalid-icon"></i>
+                                </div>
+                            </div>
+                            <div class="field-error" id="heightError"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="regWeight">
+                                <i class="fas fa-weight"></i> Weight (kg)
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-weight input-icon"></i>
+                                <input 
+                                    type="number" 
+                                    id="regWeight" 
+                                    name="weight"
+                                    placeholder="Enter weight in kg"
+                                    min="30"
+                                    max="300"
+                                >
+                                <div class="input-validation">
+                                    <i class="fas fa-check-circle valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle invalid-icon"></i>
+                                </div>
+                            </div>
+                            <div class="field-error" id="weightError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="activityLevel">
+                                <i class="fas fa-running"></i> Activity Level
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-running input-icon"></i>
+                                <select id="activityLevel" name="activityLevel">
+                                    <option value="">Select Activity Level</option>
+                                    <option value="sedentary">Sedentary (Little/no exercise)</option>
+                                    <option value="light">Light (Light exercise 1-3 days/week)</option>
+                                    <option value="moderate">Moderate (Moderate exercise 3-5 days/week)</option>
+                                    <option value="active">Active (Hard exercise 6-7 days/week)</option>
+                                    <option value="very-active">Very Active (Physical job + exercise)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medicalConditions">
+                            <i class="fas fa-notes-medical"></i> Medical Conditions
+                        </label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" name="medicalConditions" value="diabetes">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">Diabetes</span>
+                            </label>
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" name="medicalConditions" value="heart-disease">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">Heart Disease</span>
+                            </label>
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" name="medicalConditions" value="hypertension">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">High Blood Pressure</span>
+                            </label>
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" name="medicalConditions" value="asthma">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">Asthma</span>
+                            </label>
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" name="medicalConditions" value="epilepsy">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">Epilepsy</span>
+                            </label>
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" name="medicalConditions" value="allergies">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">Severe Allergies</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medications">
+                            <i class="fas fa-pills"></i> Current Medications
+                        </label>
+                        <textarea 
+                            id="medications" 
+                            name="medications"
+                            placeholder="List any medications you are currently taking (optional)"
+                            rows="4"
+                        ></textarea>
+                        <small class="field-help">This information helps emergency responders provide appropriate care</small>
+                    </div>
+                </div>
+
+                <!-- Step 3: Emergency Contacts -->
+                <div class="form-step" id="step3">
+                    <div class="step-header">
+                        <h3><i class="fas fa-address-book"></i> Emergency Contacts</h3>
+                        <p>Add people to contact during emergencies</p>
+                    </div>
+
+                    <div id="emergencyContacts">
+                        <div class="emergency-contact-item">
+                            <h4>Primary Emergency Contact</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="contact1Name">
+                                        <i class="fas fa-user"></i> Full Name *
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-user input-icon"></i>
+                                        <input 
+                                            type="text" 
+                                            id="contact1Name" 
+                                            name="contact1Name"
+                                            placeholder="Emergency contact name"
+                                            required
+                                            pattern="[A-Za-z\s]{2,50}"
+                                        >
+                                        <div class="input-validation">
+                                            <i class="fas fa-check-circle valid-icon"></i>
+                                            <i class="fas fa-exclamation-circle invalid-icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="field-error" id="contact1NameError"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="contact1Relation">
+                                        <i class="fas fa-heart"></i> Relationship
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-heart input-icon"></i>
+                                        <select id="contact1Relation" name="contact1Relation">
+                                            <option value="">Select Relationship</option>
+                                            <option value="spouse">Spouse</option>
+                                            <option value="parent">Parent</option>
+                                            <option value="child">Child</option>
+                                            <option value="sibling">Sibling</option>
+                                            <option value="friend">Friend</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="contact1Phone">
+                                        <i class="fas fa-phone"></i> Phone Number *
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-phone input-icon"></i>
+                                        <input 
+                                            type="tel" 
+                                            id="contact1Phone" 
+                                            name="contact1Phone"
+                                            placeholder="Emergency contact phone"
+                                            required
+                                            pattern="[0-9]{10,15}"
+                                        >
+                                        <div class="input-validation">
+                                            <i class="fas fa-check-circle valid-icon"></i>
+                                            <i class="fas fa-exclamation-circle invalid-icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="field-error" id="contact1PhoneError"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="contact1Email">
+                                        <i class="fas fa-envelope"></i> Email Address
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-envelope input-icon"></i>
+                                        <input 
+                                            type="email" 
+                                            id="contact1Email" 
+                                            name="contact1Email"
+                                            placeholder="Emergency contact email"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="emergency-contact-item">
+                            <h4>Secondary Emergency Contact (Optional)</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="contact2Name">
+                                        <i class="fas fa-user"></i> Full Name
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-user input-icon"></i>
+                                        <input 
+                                            type="text" 
+                                            id="contact2Name" 
+                                            name="contact2Name"
+                                            placeholder="Secondary contact name"
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="contact2Phone">
+                                        <i class="fas fa-phone"></i> Phone Number
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-phone input-icon"></i>
+                                        <input 
+                                            type="tel" 
+                                            id="contact2Phone" 
+                                            name="contact2Phone"
+                                            placeholder="Secondary contact phone"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-secondary add-contact-btn" onclick="addEmergencyContact()">
+                        <i class="fas fa-plus"></i> Add Another Contact
+                    </button>
+                </div>
+
+                <!-- Step 4: Security Setup -->
+                <div class="form-step" id="step4">
+                    <div class="step-header">
+                        <h3><i class="fas fa-shield-alt"></i> Security Setup</h3>
+                        <p>Configure your account security preferences</p>
+                    </div>
+
+                    <div class="security-options">
+                        <div class="security-option">
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" id="enableTwoFactor" name="enableTwoFactor">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">
+                                    <i class="fas fa-shield-alt"></i>
+                                    Enable Two-Factor Authentication
+                                </span>
+                            </label>
+                            <small class="field-help">Adds an extra layer of security to your account</small>
+                        </div>
+
+                        <div class="security-option">
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" id="enableLocationTracking" name="enableLocationTracking">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Enable Location Tracking
+                                </span>
+                            </label>
+                            <small class="field-help">Allows emergency responders to locate you quickly</small>
+                        </div>
+
+                        <div class="security-option">
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" id="enableEmergencySharing" name="enableEmergencySharing">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">
+                                    <i class="fas fa-share-alt"></i>
+                                    Emergency Data Sharing
+                                </span>
+                            </label>
+                            <small class="field-help">Share medical data with emergency services when needed</small>
+                        </div>
+                    </div>
+
+                    <div class="privacy-notice">
+                        <h4><i class="fas fa-lock"></i> Privacy & Terms</h4>
+                        <div class="privacy-content">
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">
+                                    I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a> *
+                                </span>
+                            </label>
+                            
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" id="agreeData" name="agreeData" required>
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">
+                                    I consent to the processing of my medical data for emergency response purposes *
+                                </span>
+                            </label>
+
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" id="marketingEmails" name="marketingEmails">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">
+                                    I would like to receive updates and safety tips via email
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="form-navigation">                    <button type="button" class="btn btn-secondary hidden" id="prevBtn" onclick="changeStep(-1)">
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    
+                    <button type="button" class="btn btn-primary" id="nextBtn" onclick="changeStep(1)">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                    
+                    <button type="submit" class="btn btn-primary hidden" id="submitBtn">
+                        <span class="btn-text">
+                            <i class="fas fa-user-plus"></i> Create Account
+                        </span>
+                        <div class="btn-loader hidden">
+                            <i class="fas fa-spinner fa-spin"></i> Creating Account...
+                        </div>
+                    </button>
+                </div>
+            </form>
+
+            <div class="form-footer">
+                <p class="login-prompt">
+                    Already have an account? 
+                    <a href="login.html" class="login-link">
+                        <i class="fas fa-sign-in-alt"></i> Login Here
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Security Features -->
+        <div class="security-features">
+            <div class="feature">
+                <i class="fas fa-user-shield"></i>
+                <span>HIPAA Compliant</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-lock"></i>
+                <span>End-to-End Encryption</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-shield-alt"></i>
+                <span>SOC 2 Certified</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/profile-management.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>
+                    <i class="fas fa-address-book"></i>
+                    <input type="tel" id="regEmergencyContact" placeholder="Phone number of a relative or friend">
+                </div>
+                <div class="form-group">
+                    <label for="regMedicalHistory"><i class="fas fa-notes-medical"></i> Medical History</label>
+                    <i class="fas fa-notes-medical"></i>
+                    <textarea id="regMedicalHistory" rows="3" placeholder="Any known allergies, chronic illnesses, etc."></textarea>
+                </div>
+                <div id="femaleFields" class="form-group hidden">
+                    <label for="regLastPeriod"><i class="fas fa-calendar-alt"></i> Last Menstrual Period Date (optional)</label>
+                    <i class="fas fa-calendar-alt"></i>
+                    <input type="date" id="regLastPeriod">
+                </div>
+                <button class="btn" onclick="register()" id="registerBtn">
+                    <span>Register</span>
+                </button>
+                <p class="center-text">
+                    Already have an account? <a href="login.html">Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <script src="js/auth.js"></script>
+</body>
+</html>

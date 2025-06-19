@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RescueNet AI - Secure Login</title>
+    <meta name="description" content="Secure login to your RescueNet AI emergency response dashboard">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/auth.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="auth-nav">
+        <div class="nav-container">
+            <a href="home.html" class="nav-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>RescueNet AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="home.html" class="nav-link">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1><i class="fas fa-shield-alt"></i> Secure Login</h1>
+                <p>Access your emergency response dashboard</p>
+            </div>
+
+            <!-- Login Status Messages -->
+            <div id="loginStatus" class="status-message hidden"></div>
+
+            <div id="authSection" class="auth-section">
+                <div id="loginForm">
+                    <!-- Demo Section -->
+                    <div class="demo-section">
+                        <h3><i class="fas fa-play-circle"></i> Demo Accounts</h3>
+                        <p>Try our system with these demo accounts to see different user profiles and health conditions.</p>
+                        
+                        <div class="demo-grid">
+                            <button class="demo-card" onclick="fillDemoLogin('1234567890', 'John Doe - Healthy User')">
+                                <div class="demo-avatar healthy">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="demo-info">
+                                    <h4>John Doe</h4>
+                                    <span class="demo-status">Healthy Profile</span>
+                                    <small>Normal vitals, no alerts</small>
+                                </div>
+                            </button>
+
+                            <button class="demo-card" onclick="fillDemoLogin('9876543210', 'Jane Smith - Diabetic User')">
+                                <div class="demo-avatar diabetic">
+                                    <i class="fas fa-user-injured"></i>
+                                </div>
+                                <div class="demo-info">
+                                    <h4>Jane Smith</h4>
+                                    <span class="demo-status">Diabetic</span>
+                                    <small>Blood sugar monitoring</small>
+                                </div>
+                            </button>
+
+                            <button class="demo-card" onclick="fillDemoLogin('5555551234', 'Robert Brown - Heart Patient')">
+                                <div class="demo-avatar heart">
+                                    <i class="fas fa-heartbeat"></i>
+                                </div>
+                                <div class="demo-info">
+                                    <h4>Robert Brown</h4>
+                                    <span class="demo-status">Heart Condition</span>
+                                    <small>Cardiac monitoring</small>
+                                </div>
+                            </button>
+
+                            <button class="demo-card" onclick="fillDemoLogin('7777778888', 'Emily White - Asthma Patient')">
+                                <div class="demo-avatar respiratory">
+                                    <i class="fas fa-lungs"></i>
+                                </div>
+                                <div class="demo-info">
+                                    <h4>Emily White</h4>
+                                    <span class="demo-status">Asthma</span>
+                                    <small>Respiratory monitoring</small>
+                                </div>
+                            </button>
+
+                            <button class="demo-card" onclick="fillDemoLogin('1111222233', 'Michael Green - Elderly User')">
+                                <div class="demo-avatar elderly">
+                                    <i class="fas fa-user-clock"></i>
+                                </div>
+                                <div class="demo-info">
+                                    <h4>Michael Green</h4>
+                                    <span class="demo-status">Elderly Care</span>
+                                    <small>Enhanced monitoring</small>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Login Form -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-sign-in-alt"></i> Login to Your Account</h3>
+                        
+                        <form id="loginFormElement" class="auth-form" novalidate>
+                            <div class="form-group">
+                                <label for="loginPhone">
+                                    <i class="fas fa-phone"></i> Phone Number
+                                </label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-phone input-icon"></i>
+                                    <input 
+                                        type="tel" 
+                                        id="loginPhone" 
+                                        name="phone"
+                                        placeholder="Enter your phone number"
+                                        required
+                                        autocomplete="tel"
+                                        pattern="[0-9]{10,15}"
+                                        title="Please enter a valid phone number"
+                                    >
+                                    <div class="input-validation">
+                                        <i class="fas fa-check-circle valid-icon"></i>
+                                        <i class="fas fa-exclamation-circle invalid-icon"></i>
+                                    </div>
+                                </div>
+                                <div class="field-error" id="phoneError"></div>
+                            </div>
+
+                            <!-- Two-Factor Authentication Option -->
+                            <div class="security-options">
+                                <label class="checkbox-wrapper">
+                                    <input type="checkbox" id="enableTwoFactor">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">
+                                        <i class="fas fa-shield-alt"></i>
+                                        Enable Two-Factor Authentication
+                                    </span>
+                                </label>
+                            </div>
+
+                            <!-- Remember Me -->
+                            <div class="form-options">
+                                <label class="checkbox-wrapper">
+                                    <input type="checkbox" id="rememberMe">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">Remember me for 30 days</span>
+                                </label>
+                                <a href="password-recovery.html" class="forgot-link">
+                                    <i class="fas fa-key"></i> Forgot access?
+                                </a>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" id="loginBtn">
+                                <span class="btn-text">
+                                    <i class="fas fa-sign-in-alt"></i> Secure Login
+                                </span>
+                                <div class="btn-loader hidden">
+                                    <i class="fas fa-spinner fa-spin"></i> Authenticating...
+                                </div>
+                            </button>
+                        </form>
+
+                        <div class="form-footer">
+                            <p class="signup-prompt">
+                                Don't have an account? 
+                                <a href="signup.html" class="signup-link">
+                                    <i class="fas fa-user-plus"></i> Create Account
+                                </a>
+                            </p>
+                            
+                            <div class="security-info">
+                                <i class="fas fa-lock"></i>
+                                <span>Your data is protected with enterprise-grade security</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Two-Factor Authentication Section -->
+                <div id="twoFactorSection" class="two-factor-section hidden">
+                    <div class="auth-header">
+                        <h2><i class="fas fa-shield-alt"></i> Two-Factor Authentication</h2>
+                        <p>Enter the 6-digit code sent to your phone</p>
+                    </div>
+                    
+                    <form id="twoFactorForm" class="auth-form">                        <div class="otp-input-group">
+                            <input type="text" class="otp-input" maxlength="1" pattern="\d" aria-label="First digit" title="Enter first digit">
+                            <input type="text" class="otp-input" maxlength="1" pattern="\d" aria-label="Second digit" title="Enter second digit">
+                            <input type="text" class="otp-input" maxlength="1" pattern="\d" aria-label="Third digit" title="Enter third digit">
+                            <input type="text" class="otp-input" maxlength="1" pattern="\d" aria-label="Fourth digit" title="Enter fourth digit">
+                            <input type="text" class="otp-input" maxlength="1" pattern="\d" aria-label="Fifth digit" title="Enter fifth digit">
+                            <input type="text" class="otp-input" maxlength="1" pattern="\d" aria-label="Sixth digit" title="Enter sixth digit">
+                        </div>
+                        
+                        <div class="otp-actions">
+                            <button type="button" class="btn btn-secondary" onclick="resendOTP()">
+                                <i class="fas fa-redo"></i> Resend Code
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i> Verify & Login
+                            </button>
+                        </div>
+                        
+                        <button type="button" class="btn btn-outline" onclick="backToLogin()">
+                            <i class="fas fa-arrow-left"></i> Back to Login
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Features -->
+        <div class="security-features">
+            <div class="feature">
+                <i class="fas fa-lock"></i>
+                <span>256-bit SSL Encryption</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-shield-alt"></i>
+                <span>Two-Factor Authentication</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-user-shield"></i>
+                <span>Privacy Protected</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth-enhanced-new.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>
