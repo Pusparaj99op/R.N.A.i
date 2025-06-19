@@ -17,6 +17,8 @@ A comprehensive IoT-based emergency response system that monitors health vitals 
 
 ## 🛠️ Technology Stack
 
+
+
 ### Backend
 - **Node.js** with Express.js
 - **MongoDB** for data storage
