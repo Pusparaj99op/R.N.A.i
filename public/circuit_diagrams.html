@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RescueNet AI - Circuit Diagrams</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="css/circuit_diagrams.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>RescueNet AI - Circuit Diagrams</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/premium-theme.css" rel="stylesheet">
+    <link href="css/premium-navigation.css" rel="stylesheet">
+    <link href="css/premium-dashboard.css" rel="stylesheet">
 </head>
 <body>
     <!-- Background particles container -->
@@ -27,50 +27,7 @@
             <img class="lightbox-image" src="" alt="Enlarged diagram">
             <button class="lightbox-close" aria-label="Close lightbox" title="Close"><i class="bi bi-x-lg"></i></button>
         </div>
-          <!-- Overview Section -->
-        <div class="row mb-5 fade-in delay-200ms">
-            <div class="col-md-12">
-                <div class="diagram-container">
-                    <h2 class="section-title">Project Overview</h2>
-                    <p>
-                        RescueNet AI is a comprehensive IoT-based emergency response system that monitors health vitals 
-                        in real-time and automatically alerts emergency services when anomalies are detected. The system uses 
-                        ESP32 as the main controller, with an optional Arduino Nano configuration, connected to various
-                        sensors and modules.
-                    </p>
-                    <div class="row staggered-fade">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    Key Components
-                                </div>
-                                <div class="card-body">
-                                    <ul>
-                                        <li><strong>ESP32:</strong> Main controller with WiFi & Bluetooth</li>
-                                        <li><strong>Arduino Nano:</strong> Alternative/secondary controller</li>
-                                        <li><strong>MAX30102:</strong> Heart rate & SpO2 sensor</li>
-                                        <li><strong>MPU6050:</strong> Accelerometer/Gyroscope for fall detection</li>
-                                        <li><strong>DS18B20:</strong> Body temperature sensor</li>
-                                        <li><strong>SSD1306:</strong> OLED display for showing vitals</li>
-                                        <li><strong>SIM800L:</strong> GSM module for SMS alerts</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="warning-card">
-                                <h4><i class="bi bi-exclamation-triangle-fill"></i> Important Power Warning</h4>
-                                <p>The SIM800L module requires a dedicated 3.7V-4.2V power supply. <strong>Do NOT connect to 5V</strong> as it will permanently damage the module!</p>
-                            </div>
-                            <div class="note-card">
-                                <h4><i class="bi bi-info-circle-fill"></i> Note</h4>
-                                <p>This page shows the complete wiring diagrams for both ESP32 and Arduino Nano configurations. Refer to the detailed connection tables for specific pin assignments.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>        <!-- Complete System Diagram -->
+          <!-- Complete System Diagram -->
         <div class="row mb-5 fade-in delay-300ms">
             <div class="col-md-12">
                 <div class="diagram-container">
@@ -715,6 +672,49 @@
                         resize: true
                     },
                     modes: {
+                        grab: { distance: 140, line_linked: { opacity: 0.5 } },
+                        push: { particles_nb: 4 }
+                    }
+                },
+                retina_detect: true
+            });
+
+            // Modern lightbox functionality
+            const images = document.querySelectorAll('.diagram-img-large');
+            const lightbox = document.querySelector('.lightbox-overlay');
+            const lightboxImg = document.querySelector('.lightbox-image');
+            const closeBtn = document.querySelector('.lightbox-close');
+
+            images.forEach(img => {
+                img.addEventListener('click', function() {
+                    lightboxImg.src = this.src;
+                    lightbox.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            closeBtn.addEventListener('click', function() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === lightbox) {
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
                         grab: { distance: 140, line_linked: { opacity: 0.5 } },
                         push: { particles_nb: 4 }
                     }

@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>RescueNet AI - Emergency Response System</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>RescueNet AI - Emergency Response System</title>    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-    <link href="css/dashboard.css" rel="stylesheet">
+    <link href="css/premium-theme.css" rel="stylesheet">
+    <link href="css/premium-navigation.css" rel="stylesheet">
+    <link href="css/premium-dashboard.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-dark text-light">
     <div class="container">
         <div class="header">
             <h1><i class="fas fa-heartbeat"></i> RescueNet AI</h1>
@@ -32,8 +32,8 @@
             <div class="card">
                 <h3><i class="fas fa-user"></i> User Profile</h3>
                 <div id="userInfo"></div>
-                <button class="logout-btn" onclick="logout()">Logout</button>
-                <button class="emergency-btn" onclick="triggerEmergency()">
+                <button class="logout-btn btn btn-secondary" onclick="logout()">Logout</button>
+                <button class="emergency-btn btn btn-danger" onclick="triggerEmergency()">
                     <i class="fas fa-exclamation-triangle"></i> Trigger Emergency
                 </button>
             </div>
@@ -99,9 +99,17 @@
         </div>
     </div>
 
+    <!-- Back to Top Button -->
+    <button id="backToTopBtn" class="btn btn-info position-fixed bottom-0 end-0 m-3">Back to Top</button>
+
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="js/dashboard.js"></script>
+    <script>        document.getElementById('backToTopBtn').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+    <script src="js/premium-enhanced.js"></script>
 </body>
 </html>
